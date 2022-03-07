@@ -1,18 +1,20 @@
 import { AxiosRequestHeaders, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+
+export type Method = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'CONNECT' | 'TRACE' | 'PATCH'
 // 路径配置
-export type RequestPath = string;
+export type RequestPath = `${Method} ${string}`
 
 // 选项配置
 export type RequestOptions = {
     path: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'HEAD' | 'OPTIONS' | 'CONNECT' | 'TRACE' | 'PATCH',
+    method: Method,
     headers?: AxiosRequestHeaders;
 };
 
 // 自定义函数
 export type RequestFunction<P = Record<string, any> | void, R = any> = (
     params: P,
-    ...args: any[]
+    options?: AxiosRequestConfig
 ) => Promise<R>;
 
 export type APIConfig = RequestPath | RequestOptions | RequestFunction;

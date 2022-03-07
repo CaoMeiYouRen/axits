@@ -24,6 +24,10 @@ interface TestAPISchema extends APISchema {
             name: string;
         };
     },
+    test: {
+        request: {},
+        response: {}
+    }
 }
 
 const api = createRequestClient<TestAPISchema>({
@@ -31,8 +35,9 @@ const api = createRequestClient<TestAPISchema>({
     apis: {
         getUser: 'GET api/user/:id',
         createUser: 'POST api/user',
+        test: 'GET /test'
     }
 });
 
 api.getUser({ id: 1 }).then(res => console.log(res.data.name));
-api.createUser({ name: 'xx', avatar: 1 }).then(res => console.log(res.data.xxx));
+api.createUser({ name: 'xx', avatar: '1' }).then(res => console.log(res.data));

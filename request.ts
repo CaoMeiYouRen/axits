@@ -1,4 +1,5 @@
 import axios, { AxiosInstance, AxiosRequestHeaders, AxiosError } from 'axios';
+import { Method } from 'axios';
 import {
     APISchema,
     RequestPath,
@@ -29,10 +30,13 @@ function attachAPI<T extends APISchema>(
         // 配置为一个对象
         if (typeof apiConfig === 'object') {
             const { path, ...rest } = apiConfig as RequestOptions;
-            apiPath = path;
+            apiPath = path as RequestPath;
             apiOptions = rest;
+            if (rest.method) {
+                apiPath = (rest.method + ' ' + path) as RequestPath // 解决 非路径中带 method 时，无法正确匹配 requestParams 的问题
+            }
         }
-        hostApi[apiName] = (params, options) => {
+        hostApi[apiName] = (params, options = {}) => {
             const _params = { ...(params || {}) };
             // 匹配路径中请求方法，如：'POST /api/test'
             const [prefix, method] = apiPath.match(MATCH_METHOD) || ['GET ', 'GET'];
@@ -54,7 +58,7 @@ function attachAPI<T extends APISchema>(
                 : { params: _params };
             return client.request({
                 url,
-                method: method.toLowerCase(),
+                method: method.toLowerCase() as Method,
                 ...requestParams,
                 ...apiOptions,
                 ...options,
